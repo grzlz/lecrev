@@ -13,10 +13,12 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar links={primaryNavLinks} cta={primaryNavCta} />
+<div class="flex min-h-screen flex-col bg-primary-950 text-primary-100">
+	<Navbar links={primaryNavLinks} cta={primaryNavCta} />
 
-<main>
-	{@render children?.()}
-</main>
+	<main class="flex-1">
+		{@render children?.()}
+	</main>
 
-<Footer brand={footerBrand} sections={footerSections} metaLinks={footerMetaLinks} />
+	<Footer brand={footerBrand} sections={footerSections} metaLinks={footerMetaLinks} />
+</div>
