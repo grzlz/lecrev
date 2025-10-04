@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant You
+    participant GitHub
+    participant Actions
+    participant Laptop
+    
+    You->>GitHub: git push origin main
+    GitHub->>Actions: Trigger workflow
+    Actions->>Actions: Spin up Ubuntu runner
+    Actions->>Laptop: SSH connection (via Cloudflare)
+    Actions->>Laptop: git pull origin main
+    Actions->>Laptop: npm install
+    Actions->>Laptop: npm run build
+    Actions->>Laptop: pm2 restart app
+    Laptop->>Actions: Success/Failure status
+    Actions->>GitHub: Update commit status ✓
+    GitHub->>You: Email/notification (if enabled)

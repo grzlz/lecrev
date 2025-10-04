@@ -1,0 +1,73 @@
+graph TB
+    subgraph Internet[Internet]
+        Users[Users/Visitors]
+        DiscordAPI[Discord API]
+    end
+
+    subgraph Cloudflare[Cloudflare Layer]
+        CFTunnel[Cloudflare Tunnel]
+        DNS[DNS Records]
+    end
+
+    subgraph Router[Home Network]
+        RouterBox[Router]
+    end
+
+    subgraph Laptop[Windows Gaming Laptop]
+        subgraph OS[Operating System Layer]
+            WSL2[WSL2 Ubuntu]
+        end
+        
+        subgraph ReverseProxy[Reverse Proxy]
+            Caddy[Caddy/Nginx<br/>Port 80/443]
+        end
+        
+        subgraph Apps[Application Layer]
+            Bot[Discord Bot<br/>Node.js/Python<br/>Port 3001]
+            Site1[SvelteKit Site 1<br/>Port 3002]
+            Site2[SvelteKit Site 2<br/>Port 3003]
+        end
+        
+        subgraph Analytics[Analytics]
+            Umami[Umami/Plausible<br/>Port 3004]
+            DB[(PostgreSQL<br/>Port 5432)]
+        end
+        
+        subgraph Management[Management Tools]
+            PM2[PM2 Process Manager]
+            Docker[Docker Engine]
+        end
+    end
+
+    Users -->|HTTPS| DNS
+    DNS --> CFTunnel
+    CFTunnel -->|Encrypted Tunnel| Caddy
+    
+    DiscordAPI <-->|WebSocket| Bot
+    
+    Caddy -->|Proxy| Site1
+    Caddy -->|Proxy| Site2
+    Caddy -->|Proxy| Umami
+    
+    Site1 -.->|Track Events| Umami
+    Site2 -.->|Track Events| Umami
+    
+    Umami --> DB
+    
+    PM2 -.->|Manages| Bot
+    PM2 -.->|Manages| Site1
+    PM2 -.->|Manages| Site2
+    
+    Docker -.->|Runs| Umami
+    Docker -.->|Runs| DB
+    
+    RouterBox -.->|Local Network| Laptop
+
+    style Laptop fill:#2d3748,stroke:#4a5568,stroke-width:3px
+    style Cloudflare fill:#f6821f,stroke:#f6821f,stroke-width:2px
+    style Internet fill:#4299e1,stroke:#3182ce,stroke-width:2px
+    style WSL2 fill:#e97627,stroke:#dd4814
+    style Caddy fill:#1f8b4c,stroke:#165a32
+    style Bot fill:#5865f2,stroke:#4752c4
+    style Umami fill:#5850ec,stroke:#4338ca
+    style DB fill:#336791,stroke:#275d7a
