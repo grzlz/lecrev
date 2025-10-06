@@ -1,0 +1,152 @@
+Hoja de Ruta de Desarrollo de lecrev
+====================================
+
+Fase 1: Configuración de la Base
+--------------------------------
+[ ] Configuración de Ubuntu en WSL2
+    [ ] Instalar Ubuntu sobre WSL2
+    [ ] Configurar ajustes de red
+    [ ] Definir permisos de usuario
+
+[ ] Instalación de dependencias principales
+    [ ] Node.js (versión LTS)
+    [ ] Docker y Docker Compose
+    [ ] Instalación global de PM2
+    [ ] Configuración de Git
+
+[ ] Estructura de directorios
+    [ ] Crear directorios de aplicaciones (/apps, /configs, /logs)
+    [ ] Configurar la gestión de variables de entorno (plantilla .env)
+    [ ] Decidir estrategia mono-repo o multi-repo
+
+
+Fase 2: Proxy Inverso y Túnel
+-----------------------------
+[ ] Configuración de Cloudflare
+    [ ] Crear cuenta en Cloudflare
+    [ ] Configurar registros DNS
+    [ ] Instalar cloudflared
+    [ ] Configurar túnel para servicios locales
+    [ ] Probar conectividad del túnel
+
+[ ] Proxy inverso (Caddy)
+    [ ] Instalar Caddy
+    [ ] Configurar Caddyfile para múltiples sitios
+    [ ] Activar HTTPS automático
+    [ ] Definir reglas de enrutamiento
+    [ ] Probar proxy local (puertos 3001-3004)
+
+
+Fase 3: Base de Datos y Analítica
+---------------------------------
+[ ] Configuración de PostgreSQL
+    [ ] Archivo Docker Compose para PostgreSQL
+    [ ] Scripts de inicialización de la base
+    [ ] Estrategia de respaldos
+    [ ] Configuración de pooling de conexiones
+
+[ ] Plataforma de analítica (Umami o Plausible)
+    [ ] Elegir entre Umami/Plausible
+    [ ] Configuración con Docker Compose
+    [ ] Conectar a PostgreSQL
+    [ ] Crear script de seguimiento
+    [ ] Probar acceso al panel (puerto 3004)
+
+
+Fase 4: Desarrollo de Aplicaciones
+----------------------------------
+[ ] Bot de Discord (puerto 3001)
+    [ ] Inicializar proyecto del bot
+    [ ] Registrar aplicación en Discord
+    [ ] Definir comandos básicos
+    [ ] Configuración de PM2
+    [ ] Probar despliegue
+
+[ ] SvelteKit Sitio 1 (puerto 3002)
+    [ ] Inicializar proyecto SvelteKit
+    [ ] Maquetar diseño y páginas básicas
+    [ ] Integrar seguimiento de analítica
+    [ ] Configuración de PM2
+    [ ] Compilar y probar
+
+[ ] SvelteKit Sitio 2 (puerto 3003)
+    [ ] Inicializar proyecto SvelteKit
+    [ ] Maquetar diseño y páginas básicas
+    [ ] Integrar seguimiento de analítica
+    [ ] Configuración de PM2
+    [ ] Compilar y probar
+
+
+Fase 5: Pipeline de CI/CD
+-------------------------
+[ ] Configuración de repositorio en GitHub
+    [ ] Crear llaves SSH de despliegue
+    [ ] Añadir secretos a GitHub (llave SSH, hosts)
+    [ ] Configurar túnel de Cloudflare para acceso SSH
+
+[ ] Workflow de GitHub Actions
+    [ ] Crear .github/workflows/deploy.yml
+    [ ] Configurar runner Ubuntu
+    [ ] Conexión SSH vía túnel de Cloudflare
+    [ ] Flujo Pull → Install → Build → Restart
+    [ ] Notificación en éxito/fallo
+
+[ ] Pruebas y rollback
+    [ ] Probar despliegue con commit de prueba
+    [ ] Diseñar estrategia de rollback
+    [ ] Añadir health checks
+
+
+Fase 6: Monitoreo y Mantenimiento
+---------------------------------
+[ ] Infraestructura de logs
+    [ ] Centralizar logs de todos los servicios
+    [ ] Configurar rotación de logs
+    [ ] Alertas de error (¿bot de Discord?)
+
+[ ] Panel de monitoreo
+    [ ] Interfaz de monitoreo de PM2
+    [ ] Health checks de contenedores Docker
+    [ ] Alertas de uso de disco/memoria/CPU
+
+[ ] Automatización de respaldos
+    [ ] Respaldos automáticos de PostgreSQL
+    [ ] Respaldos de archivos de configuración
+    [ ] Estrategia de almacenamiento (¿local + nube?)
+
+
+Fase 7: Documentación y Comunidad
+---------------------------------
+[ ] Preparar documentación
+    [ ] Guía paso a paso de WSL2
+    [ ] Tutorial del túnel de Cloudflare
+    [ ] Guías de despliegue de servicios
+
+[ ] Lineamientos de contribución
+    [ ] CONTRIBUTING.md
+    [ ] Código de conducta
+    [ ] Plantillas de issues
+
+[ ] Contenido de blog/tutoriales
+    [ ] Tutorial "Self-hosting en una laptop gamer"
+    [ ] Guía "CI/CD sin proveedores cloud"
+    [ ] Compartir en dev.to, Medium, etc.
+
+
+Mejoras Futuras
+---------------
+[ ] Servicios adicionales (Gitea, Nextcloud, etc.)
+[ ] Soporte multi-nodo (si se necesita escalar)
+[ ] Service mesh para microservicios
+[ ] Endurecimiento avanzado de seguridad
+[ ] Funcionalidades de analítica personalizadas
+[ ] App móvil para monitoreo
+
+
+Notas
+-----
+- Priorizar simplicidad sobre complejidad
+- Probar cada fase a fondo antes de avanzar
+- Mantener servicios modulares y reemplazables
+- Documentar todo para la replicación por la comunidad
+- "La nube ha resultado contraproducente" — demostrar que el self-hosting funciona

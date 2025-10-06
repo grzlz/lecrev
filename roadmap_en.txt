@@ -1,0 +1,152 @@
+lecrev Development Roadmap
+=============================
+
+Phase 1: Foundation Setup
+--------------------------
+[ ] WSL2 Ubuntu configuration
+    [ ] Install Ubuntu on WSL2
+    [ ] Configure network settings
+    [ ] Set up user permissions
+
+[ ] Core dependencies installation
+    [ ] Node.js (LTS version)
+    [ ] Docker & Docker Compose
+    [ ] PM2 global installation
+    [ ] Git configuration
+
+[ ] Directory structure
+    [ ] Create app directories (/apps, /configs, /logs)
+    [ ] Set up environment variable management (.env template)
+    [ ] Initialize monorepo or multi-repo strategy decision
+
+
+Phase 2: Reverse Proxy & Tunnel
+--------------------------------
+[ ] Cloudflare setup
+    [ ] Create Cloudflare account
+    [ ] Configure DNS records
+    [ ] Install cloudflared
+    [ ] Configure tunnel for local services
+    [ ] Test tunnel connectivity
+
+[ ] Reverse proxy (Caddy)
+    [ ] Install Caddy
+    [ ] Configure Caddyfile for multiple sites
+    [ ] Set up automatic HTTPS
+    [ ] Configure routing rules
+    [ ] Test local proxy (ports 3001-3004)
+
+
+Phase 3: Database & Analytics
+------------------------------
+[ ] PostgreSQL setup
+    [ ] Docker Compose file for PostgreSQL
+    [ ] Database initialization scripts
+    [ ] Backup strategy
+    [ ] Connection pooling configuration
+
+[ ] Analytics platform (Umami or Plausible)
+    [ ] Choose between Umami/Plausible
+    [ ] Docker Compose setup
+    [ ] Connect to PostgreSQL
+    [ ] Create tracking script
+    [ ] Test dashboard access (port 3004)
+
+
+Phase 4: Application Development
+---------------------------------
+[ ] Discord Bot (port 3001)
+    [ ] Initialize bot project
+    [ ] Discord app registration
+    [ ] Basic command structure
+    [ ] PM2 configuration
+    [ ] Test deployment
+
+[ ] SvelteKit Site 1 (port 3002)
+    [ ] Initialize SvelteKit project
+    [ ] Basic layout and pages
+    [ ] Integrate analytics tracking
+    [ ] PM2 configuration
+    [ ] Build & test
+
+[ ] SvelteKit Site 2 (port 3003)
+    [ ] Initialize SvelteKit project
+    [ ] Basic layout and pages
+    [ ] Integrate analytics tracking
+    [ ] PM2 configuration
+    [ ] Build & test
+
+
+Phase 5: CI/CD Pipeline
+-----------------------
+[ ] GitHub repository setup
+    [ ] Create deployment SSH keys
+    [ ] Add secrets to GitHub (SSH key, hosts)
+    [ ] Configure Cloudflare tunnel for SSH access
+
+[ ] GitHub Actions workflow
+    [ ] Create .github/workflows/deploy.yml
+    [ ] Configure Ubuntu runner
+    [ ] SSH connection via Cloudflare tunnel
+    [ ] Pull → Install → Build → Restart flow
+    [ ] Notification on success/failure
+
+[ ] Testing & rollback
+    [ ] Test deployment on dummy commit
+    [ ] Create rollback strategy
+    [ ] Add health checks
+
+
+Phase 6: Monitoring & Maintenance
+----------------------------------
+[ ] Logging infrastructure
+    [ ] Centralize logs from all services
+    [ ] Log rotation setup
+    [ ] Error alerting (Discord bot?)
+
+[ ] Monitoring dashboard
+    [ ] PM2 monitoring interface
+    [ ] Docker container health checks
+    [ ] Disk/memory/CPU usage alerts
+
+[ ] Backup automation
+    [ ] PostgreSQL automated backups
+    [ ] Configuration file backups
+    [ ] Backup storage strategy (local + cloud?)
+
+
+Phase 7: Documentation & Community
+-----------------------------------
+[ ] Setup documentation
+    [ ] Step-by-step WSL2 setup guide
+    [ ] Cloudflare tunnel tutorial
+    [ ] Service deployment guides
+
+[ ] Contributing guidelines
+    [ ] CONTRIBUTING.md
+    [ ] Code of conduct
+    [ ] Issue templates
+
+[ ] Blog/tutorial content
+    [ ] "Self-hosting on a gaming laptop" tutorial
+    [ ] "CI/CD without cloud providers" guide
+    [ ] Share on dev.to, Medium, etc.
+
+
+Future Enhancements
+-------------------
+[ ] Additional services (Gitea, Nextcloud, etc.)
+[ ] Multi-node support (if scaling needed)
+[ ] Service mesh for microservices
+[ ] Advanced security hardening
+[ ] Custom analytics features
+[ ] Mobile app for monitoring
+
+
+Notes
+-----
+- Prioritize simplicity over complexity
+- Test each phase thoroughly before moving forward
+- Keep services modular and replaceable
+- Document everything for community replication
+- "La nube ha resultado contraproducente" - prove self-hosting works

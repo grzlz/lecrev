@@ -1,0 +1,25 @@
+{
+  "name": "lecrev",
+  "version": "1.0.0",
+  "description": "https://x.com/rauchg/status/1972669025525158031",
+  "keywords": [
+    "Self-hosting",
+    "as",
+    "self-service"
+  ],
+  "homepage": "https://github.com/grzlz/lecrev#readme",
+  "bugs": {
+    "url": "https://github.com/grzlz/lecrev/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grzlz/lecrev.git"
+  },
+  "license": "MIT",
+  "author": "icarus.mx",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  }
+}
