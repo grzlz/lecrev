@@ -1,0 +1,43 @@
+graph TB
+    subgraph PM2Config[ecosystem.config.js - Configuracion PM2]
+        direction TB
+        App1Config[App: Discord Bot<br/>---<br/>name: 'discord-bot'<br/>script: './bot/index.js'<br/>instances: 1<br/>exec_mode: 'fork'<br/>env: PORT=3001]
+        App2Config[App: SvelteKit Site 1<br/>---<br/>name: 'lecrev-site1'<br/>script: './app/build/index.js'<br/>instances: 1<br/>env: PORT=3002]
+        App3Config[App: SvelteKit Site 2<br/>---<br/>name: 'lecrev-site2'<br/>script: './app2/build/index.js'<br/>instances: 1<br/>env: PORT=3003]
+    end
+
+    subgraph CaddyConfig[Caddyfile - Configuracion Reverse Proxy]
+        direction TB
+        CaddyDomain1[tudominio.com<br/>---<br/>reverse_proxy localhost:3002<br/>encode gzip<br/>log]
+        CaddyDomain2[app2.tudominio.com<br/>---<br/>reverse_proxy localhost:3003<br/>encode gzip<br/>log]
+        CaddyDomain3[analytics.tudominio.com<br/>---<br/>reverse_proxy localhost:3004<br/>encode gzip]
+        CaddyDomain4[bot.tudominio.com<br/>---<br/>reverse_proxy localhost:3001]
+    end
+
+    subgraph CloudflareConfig[Cloudflare Tunnel Config]
+        direction TB
+        TunnelConfig[config.yml<br/>---<br/>tunnel: lecrev<br/>credentials-file: /path/to/creds.json<br/>---<br/>ingress:<br/>  - hostname: '*.tudominio.com'<br/>    service: http://localhost:80<br/>  - service: http_status:404]
+    end
+
+    subgraph DockerConfig[docker-compose.yml - Servicios]
+        direction TB
+        PostgresService[PostgreSQL<br/>---<br/>image: postgres:15<br/>ports: 5432:5432<br/>volumes: ./data/postgres<br/>env: POSTGRES_PASSWORD]
+        UmamiService[Umami Analytics<br/>---<br/>image: ghcr.io/umami-software/umami<br/>ports: 3004:3000<br/>depends_on: postgres<br/>env: DATABASE_URL]
+    end
+
+    subgraph PublicAPI[Interfaces Publicas Expuestas]
+        direction TB
+        HTTPSEndpoints[Endpoints HTTPS<br/>---<br/>GET tudominio.com/*<br/>GET app2.tudominio.com/*<br/>GET analytics.tudominio.com/*<br/>POST /api/collect<br/>Tracking de Umami]
+        WebSocketEndpoints[WebSocket<br/>---<br/>Discord Bot Gateway<br/>wss://gateway.discord.gg]
+    end
+
+    PM2Config -->|Procesos gestionados| CaddyConfig
+    CloudflareConfig -->|Trafico HTTPS| CaddyConfig
+    CaddyConfig -->|Proxying| PublicAPI
+    DockerConfig -->|Servicios backend| CaddyConfig
+
+    style PM2Config fill:#2b5797,stroke:#1e3a5f,stroke-width:2px
+    style CaddyConfig fill:#1f8b4c,stroke:#165a32,stroke-width:2px
+    style CloudflareConfig fill:#f6821f,stroke:#f6821f,stroke-width:2px
+    style DockerConfig fill:#2496ed,stroke:#1d7bbf,stroke-width:2px
+    style PublicAPI fill:#4299e1,stroke:#3182ce,stroke-width:2px

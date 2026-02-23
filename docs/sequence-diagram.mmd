@@ -1,0 +1,43 @@
+sequenceDiagram
+    actor Usuario as Usuario
+    participant Browser as Navegador
+    participant DNS as Cloudflare DNS
+    participant Tunnel as Cloudflare Tunnel
+    participant Caddy as Caddy Server
+    participant App as Aplicacion SvelteKit
+    participant Umami as Umami Analytics
+    participant DB as PostgreSQL
+
+    Note over Usuario,DB: Flujo de una peticion HTTP completa
+
+    Usuario->>Browser: Visita tudominio.com
+    Browser->>DNS: Resolver tudominio.com
+    DNS-->>Browser: IP del Cloudflare Tunnel
+
+    Note over Browser,Tunnel: Conexion HTTPS cifrada
+
+    Browser->>Tunnel: GET / (HTTPS)
+    Tunnel->>Caddy: Reenviar via tunnel cifrado
+
+    Note over Caddy: Caddy termina SSL/TLS<br/>y enruta segun dominio
+
+    Caddy->>App: GET / (HTTP localhost:3002)
+    App->>App: Renderizar pagina SvelteKit
+    App-->>Caddy: HTML + CSS + JS
+    Caddy-->>Tunnel: Respuesta con headers
+    Tunnel-->>Browser: Respuesta HTTPS
+    Browser-->>Usuario: Mostrar pagina
+
+    Note over Browser,Umami: Tracking de analiticas
+
+    Browser->>Browser: Ejecutar umami.js
+    Browser->>Tunnel: POST /api/collect<br/>(evento de pageview)
+    Tunnel->>Caddy: Reenviar a analytics.tudominio.com
+    Caddy->>Umami: POST /api/collect
+    Umami->>DB: INSERT evento
+    DB-->>Umami: OK
+    Umami-->>Caddy: 200 OK
+    Caddy-->>Tunnel: 200 OK
+    Tunnel-->>Browser: 200 OK
+
+    Note over Usuario,DB: Usuario navega la app sin rastreo invasivo

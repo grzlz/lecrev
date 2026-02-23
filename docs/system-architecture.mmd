@@ -1,0 +1,75 @@
+graph TB
+    subgraph Internet[Internet]
+        Users[Usuarios/Visitantes]
+        DiscordAPI[API de Discord]
+    end
+
+    subgraph Cloudflare[Capa Cloudflare]
+        CFTunnel[Cloudflare Tunnel]
+        DNS[Registros DNS]
+    end
+
+    subgraph Router[Red Domestica]
+        RouterBox[Router/Modem]
+    end
+
+    subgraph Laptop[Laptop Gamer Windows]
+        subgraph OS[Capa de Sistema Operativo]
+            WSL2[WSL2 Ubuntu 22.04]
+        end
+
+        subgraph ReverseProxy[Proxy Inverso]
+            Caddy[Caddy Server<br/>Puerto 80/443<br/>HTTPS Automatico]
+        end
+
+        subgraph Apps[Capa de Aplicaciones]
+            Bot[Discord Bot<br/>Node.js/Python<br/>Puerto 3001]
+            Site1[SvelteKit Sitio 1<br/>Puerto 3002]
+            Site2[SvelteKit Sitio 2<br/>Puerto 3003]
+        end
+
+        subgraph Analytics[Analiticas]
+            Umami[Umami/Plausible<br/>Puerto 3004]
+            DB[(PostgreSQL<br/>Puerto 5432)]
+        end
+
+        subgraph Management[Herramientas de Gestion]
+            PM2[PM2 Process Manager<br/>Monitoreo + Restart]
+            Docker[Docker Engine<br/>Contenedores]
+        end
+    end
+
+    Users -->|HTTPS| DNS
+    DNS --> CFTunnel
+    CFTunnel -->|Tunnel Cifrado| Caddy
+
+    DiscordAPI <-->|WebSocket| Bot
+
+    Caddy -->|Proxy /| Site1
+    Caddy -->|Proxy /app2| Site2
+    Caddy -->|Proxy /analytics| Umami
+
+    Site1 -.->|Eventos de Tracking| Umami
+    Site2 -.->|Eventos de Tracking| Umami
+
+    Umami --> DB
+
+    PM2 -.->|Gestiona| Bot
+    PM2 -.->|Gestiona| Site1
+    PM2 -.->|Gestiona| Site2
+
+    Docker -.->|Ejecuta| Umami
+    Docker -.->|Ejecuta| DB
+
+    RouterBox -.->|Red Local| Laptop
+
+    style Laptop fill:#2d3748,stroke:#4a5568,stroke-width:3px
+    style Cloudflare fill:#f6821f,stroke:#f6821f,stroke-width:2px
+    style Internet fill:#4299e1,stroke:#3182ce,stroke-width:2px
+    style WSL2 fill:#e97627,stroke:#dd4814
+    style Caddy fill:#1f8b4c,stroke:#165a32
+    style Bot fill:#5865f2,stroke:#4752c4
+    style Umami fill:#5850ec,stroke:#4338ca
+    style DB fill:#336791,stroke:#275d7a
+    style PM2 fill:#2b5797,stroke:#1e3a5f
+    style Docker fill:#2496ed,stroke:#1d7bbf

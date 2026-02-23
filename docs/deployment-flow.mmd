@@ -1,0 +1,52 @@
+sequenceDiagram
+    actor Dev as Desarrollador
+    participant Local as Repo Local
+    participant GH as GitHub
+    participant Actions as GitHub Actions
+    participant CF as Cloudflare Tunnel
+    participant Server as Servidor WSL2
+    participant PM2 as PM2
+    participant App as Aplicacion
+
+    Note over Dev,App: Flujo Completo de CI/CD
+
+    Dev->>Local: git add . && git commit
+    Dev->>Local: git push origin main
+    Local->>GH: Push commits
+
+    Note over GH,Actions: Trigger automatico del workflow
+
+    GH->>Actions: Activar workflow deploy.yml
+    Actions->>Actions: Iniciar runner Ubuntu
+
+    Note over Actions,CF: Conexion segura via tunnel
+
+    Actions->>CF: Conexion SSH via tunnel
+    CF->>Server: Reenviar conexion SSH
+
+    Note over Actions,Server: Comandos de despliegue
+
+    Actions->>Server: cd ~/lecrev/app
+    Actions->>Server: git pull origin main
+    Server-->>Actions: OK - Codigo actualizado
+
+    Actions->>Server: npm install
+    Server-->>Actions: Dependencias instaladas
+
+    Actions->>Server: npm run build
+    Server-->>Actions: Build exitoso
+
+    Actions->>Server: pm2 restart lecrev-app
+    Server->>PM2: Solicitud de restart
+    PM2->>App: Detener proceso viejo
+    PM2->>App: Iniciar proceso nuevo
+    App-->>PM2: Aplicacion corriendo
+    PM2-->>Server: Restart exitoso
+    Server-->>Actions: Despliegue completado
+
+    Note over Actions,GH: Reportar resultado
+
+    Actions->>GH: Actualizar status del commit ✓
+    GH->>Dev: Notificacion (email/webhook)
+
+    Note over Dev,App: Nueva version en produccion!
